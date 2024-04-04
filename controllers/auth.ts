@@ -2,27 +2,34 @@ import { Response, Request } from "express";
 import { IUser, User } from "../models/User";
 import { ErrorResponse } from "../utils/errorResponse";
 import sendEmail from "../utils/emailSender";
-import * as crypto from "crypto";
-import { sendResponse } from "../utils/sendResponse";
-import { generateToken } from "../utils/generateToken";
+import  bcrypt from "bcrypt";
+import { successResponse } from "../utils/sendResponse";
 
-exports.register = async (req: Request, res: Response, next: any) => {
-  const { username, email, password } = req.body;
+export const registerUser = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
   try {
+    console.log("Registering...");
+    // Hash the password before storing it
+    const hashedPassword = await bcrypt.hash(password, 10); // Hash password with salt rounds of 10
     const user: IUser = await User.create({
-      username,
       email,
-      password,
+      password: hashedPassword, // Store hashed password in the database
     });
-    const token = await generateToken(user);
-    sendResponse(token, res);
-
+    const token = user.getSignedToken();
+    // Instead of using successResponse, return the token directly
+    return token;
   } catch (error: any) {
-    next(error);
+    // Handle error appropriately, possibly by throwing an error or returning an error response
+    throw new Error(error.message);
   }
 };
 
-exports.login = async (req: Request, res: Response, next: any) => {
+export const login = async (req: Request, res: Response, next: any) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return next(
@@ -41,9 +48,9 @@ exports.login = async (req: Request, res: Response, next: any) => {
       return next(new ErrorResponse("Invalid Credentials", 401));
     }
 
-    const token = await generateToken(user);
+    const token = user.getSignedToken();
 
-    sendResponse(token, res);
+    successResponse(token, res);
   } catch (error: any) {
     return next(new ErrorResponse(error.message, 500));
   }
@@ -89,29 +96,29 @@ exports.forgotPassword = async (req: Request, res: Response, next: any) => {
 };
 
 exports.resetPassword = async (req: Request, res: Response, next: any) => {
-  const { password } = req.body;
-  const resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(req.params.resetToken)
-    .digest("hex");
-  try {
-    const user: IUser | null = await User.findOne({
-      resetPasswordToken,
-      resetPasswordExpire: { $gt: Date.now() },
-    });
+  // const { password } = req.body;
+  // const resetPasswordToken = byc
+  //   .createHash("sha256")
+  //   .update(req.params.resetToken)
+  //   .digest("hex");
+  // try {
+  //   const user: IUser | null = await User.findOne({
+  //     resetPasswordToken,
+  //     resetPasswordExpire: { $gt: Date.now() },
+  //   });
 
-    if (!user) {
-      return next(new ErrorResponse("Invalid Reset Token", 400));
-    }
-    user.password = password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-    await user.save();
-    res.status(201).json({
-      success: true,
-      data: "Password Reset successful",
-    });
-  } catch (error) {
-    next(error);
-  }
+  //   if (!user) {
+  //     return next(new ErrorResponse("Invalid Reset Token", 400));
+  //   }
+  //   user.password = password;
+  //   user.resetPasswordToken = undefined;
+  //   user.resetPasswordExpire = undefined;
+  //   await user.save();
+  //   res.status(201).json({
+  //     success: true,
+  //     data: "Password Reset successful",
+  //   });
+  // } catch (error) {
+  //   next(error);
+  // }
 };

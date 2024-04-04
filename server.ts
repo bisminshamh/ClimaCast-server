@@ -1,31 +1,42 @@
-require("dotenv").config({ path: "./config.env" });
-
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import morgan from "morgan";
-import { json } from "body-parser";
+import express, { Application } from "express";
+import { ApolloServer } from "apollo-server-express";
+import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { connectDB } from "./config/db";
+import { typeDefs } from "./schema"; // Ensure you export your schema as typeDefs
+import { resolvers } from "./resolvers"; // Ensure you export your resolvers
+import cors from "cors";
+import bodyParser from "body-parser";
 
-const app = express();
+dotenv.config({ path: "./config/config.env" });
+
+const app: Application = express(); // Explicitly type app as Application
 const PORT = process.env.PORT || 5000;
-const errorHandler = require("./middleware/error");
+const URI = process.env.MONGODB_URI || "mongodb://localhost:27017/default_db";
 
-//connect to db
-connectDB();
+mongoose.set("strictQuery", false);
+mongoose
+  .connect(URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err: any) => console.log(err));
 
-app.use(express.json());
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/private", require("./routes/private"));
-
-//ErrorHandler (Should be last piece of middleware)
-app.use(errorHandler);
-
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Middleware to log incoming requests
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
 });
-process.on("unhandledRejection", (error, promise) => {
-  console.log(`Logged Error: ${error}`);
-  server.close(() => process.exit(1));
+
+// Define your Apollo Server
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
+
+// Start the Apollo Server instance
+server.start().then(() => {
+  // Apply the Apollo Server middleware to your Express app
+  server.applyMiddleware({ app, path: "/graphql", cors: true });
+
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}).catch(err => {
+  console.error('Failed to start Apollo Server', err);
 });
