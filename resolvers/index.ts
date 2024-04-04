@@ -1,21 +1,18 @@
-//resolvers/index.ts
+// resolvers/index.ts
 import { User } from "../models/User";
-import { registerUser, login } from "../controllers/auth";
-
-// Define an interface for the user input
-interface UserInput {
-  email: string;
-  password: string;
-}
 
 export const resolvers = {
   Query: {
-    users: async () => {
-      return await User.find().exec();
+    followByEmail: async (_, { email }) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      return user.follow;
     },
   },
   Mutation: {
-    loginUser: async (_, { email, password }, context) => {
+    loginUser: async (_, { email, password }) => {
       const user = await User.findOne({ email });
       if (!user) {
         throw new Error("User not found");
@@ -26,18 +23,37 @@ export const resolvers = {
       }
       return user.getSignedToken();
     },
-    register: async (_, { email, password }, context) => {
+    register: async (_, { email, password }) => {
+      // Your registration logic
+    },
+    addToFollow: async (_, { email, item }) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      user.follow.push(item);
+      await user.save();
+      return "Item added to follow";
+    },
+    removeFromFollow: async (_, { email, item }) => {
       try {
-        console.log("Register resolver function fired");
-        const token = await registerUser({ email, password });
-        console.log("token", token);
-        return token;
-      } catch (error) {
-        if (error instanceof Error) {
-          throw new Error(error.message);
-        } else {
-          throw new Error("An unknown error occurred");
+        // Find the user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+          throw new Error("User not found");
         }
+
+        // Filter out the item from the follow if it exactly matches
+        user.follow = user.follow.filter(
+          (followItem) => followItem !== item
+        );
+
+        // Save the updated user
+        await user.save();
+
+        return "Item removed from follow successfully";
+      } catch (error) {
+        throw new Error(error.message);
       }
     },
   },

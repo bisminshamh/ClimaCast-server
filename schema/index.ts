@@ -1,22 +1,25 @@
+// schema.ts
 import { buildSchema, printSchema } from "graphql";
 
 // Define your schema using buildSchema
 const schema = buildSchema(`
- type User {
+  type User {
     id: ID!
     email: String!
-    resetPasswordToken: String
-    resetPasswordExpire: String
- }
+    follow: [String]
+  }
 
- type Query {
+  type Query {
     users: [User]
- }
+    followByEmail(email: String!): [String]
+  }
 
- type Mutation {
+  type Mutation {
     loginUser(email: String!, password: String!): String
     register(email: String!, password: String!): String
- }
+    addToFollow(email: String!, item: String!): String
+    removeFromFollow(email: String!, item: String!): String
+  }
 `);
 
 // Convert the schema object to an SDL string

@@ -4,9 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { typeDefs } from "./schema"; // Ensure you export your schema as typeDefs
 import { resolvers } from "./resolvers"; // Ensure you export your resolvers
-import cors from "cors";
-import bodyParser from "body-parser";
-
+console.log("test");
 dotenv.config({ path: "./config/config.env" });
 
 const app: Application = express(); // Explicitly type app as Application
@@ -30,7 +28,6 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
 });
-
 // Start the Apollo Server instance
 server.start().then(() => {
   // Apply the Apollo Server middleware to your Express app
