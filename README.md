@@ -54,3 +54,28 @@ npm start
 
 ```
 The server should now be running, and you can access the ClimaCast app through the provided endpoints.
+
+## File structure
+```
+.
+├── config
+│   ├── config.env
+│   └── db.ts
+├── controllers
+│   ├── auth.ts
+│   └── weather.ts
+├── LICENSE
+├── models
+│   └── User.ts
+├── package.json
+├── package-lock.json
+├── README.md
+├── resolvers
+│   └── index.ts
+├── schema
+│   └── index.ts
+├── server.ts
+├── tsconfig.json
+└── utils
+    └── weatherData.ts
+```
