@@ -13,8 +13,8 @@ Make sure you have MongoDB installed and running on your system.
 ### 2. Set Values in `config/config.env`
 
 Ensure the necessary environment variables are set in the `config/config.env` file.
-
-### Set Email Configuration
+#### Set Email of user
+#### Set Email Password
 
 Configure the email settings by providing your email address and generating an app password for Gmail.
 
@@ -27,13 +27,13 @@ To generate an app password for Gmail, follow these steps:
 6. Select "Generate."
 
 For more details, refer to the [Google support documentation](https://support.google.com/accounts/answer/185833?hl=en).
-
-### Set Email Time in Cron Format
+#### Set Email From
+#### Set Email Time in Cron Format
 
 Set the email sending time in cron format in the `EMAIL_TIME` environment variable in the `config/config.env` file. 
 
 >By default, emails are scheduled to be sent every day at 10:00 AM, except Sundays.
-
+#### Set API KEY for Open weather
 ### 2. Install Dependencies
 
 Install the required dependencies by running:
