@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --watch './**/*.ts' --exec 'npx ts-node' server.ts"
+    "dev": "nodemon --watch './**/*.ts' --exec 'npx ts-node' server.ts",
+    "build":"npx tsc",
+    "start":"node dist/server.js"
   },
   "keywords": [],
   "author": "",

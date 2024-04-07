@@ -49,11 +49,11 @@ app.use((req, res, next) => {
 
 
 // Serve static files from the 'dist' folder
-app.use(express.static(path.join(__dirname, "../ClimaCast-ui/dist")));
+app.use(express.static(path.join(__dirname, "../../ClimaCast-ui/dist")));
 
 // Middleware to serve the main HTML file
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../ClimaCast-ui/dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../../ClimaCast-ui/dist", "index.html"));
 });
 
 
