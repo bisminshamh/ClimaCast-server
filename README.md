@@ -9,6 +9,7 @@ Follow these steps to run the application:
 ### 1. Configure MongoDB
 
 Make sure you have MongoDB installed and running on your system.
+refer [Mongo in ubuntu](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/)
 
 ### 2. Set Values in `config/config.env`
 
