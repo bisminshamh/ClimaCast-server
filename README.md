@@ -43,7 +43,7 @@ npm install
 
 ```
 
-
+### 3. Clone the frontend from `https://github.com/bisminshamh/ClimaCast-ui.git`
 ### 2. Start the Server
 
 Start the server by running:
