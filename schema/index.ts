@@ -1,6 +1,11 @@
 // schema.ts
 import { buildSchema, printSchema } from "graphql";
 
+/**
+ * Defines the GraphQL schema for the application.
+ * This schema describes the types, queries, and mutations available in the GraphQL API.
+ */
+
 // Define your schema using buildSchema
 const schema = buildSchema(`
   type User {
@@ -8,10 +13,22 @@ const schema = buildSchema(`
     email: String!
     follow: [String]
   }
+  
+  type EmailSubjectData {
+    emails: [String]!
+    subject: String!
+  }
+
+  type ApiKey {
+    key: String!
+  }
+
 
   type Query {
     users: [User]
     followByEmail(email: String!): [String]
+    getEmailsAndSubject(email: String!): EmailSubjectData
+    getApiKey: ApiKey  
   }
 
   type Mutation {
@@ -19,6 +36,7 @@ const schema = buildSchema(`
     register(email: String!, password: String!): String
     addToFollow(email: String!, item: String!): String
     removeFromFollow(email: String!, item: String!): String
+    addMail(email: String!, emails: [String]!, subject: String!): String
   }
 `);
 
